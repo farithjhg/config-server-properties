@@ -1,0 +1,71 @@
+logging:
+  level:
+    ROOT: INFO
+    org.springframework: INFO
+    org.springframework.web: INFO
+    org.springframework.cloud.config: WARN
+    com.gruposantander.api: INFO
+    
+spring:
+  application:
+    name: aml-alerts-api
+  boot:
+    admin:
+      client:
+        enabled: true
+        instance:
+          prefer-ip: true
+        url: ${ADMIN_URL}
+        api-path: "instances"
+        
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*' # Enable all actuator endpoints
+        
+health:
+  config:
+    enabled: false
+    
+serenity:
+  security:
+    keyprovider:
+      publicKeys:
+        -
+          alias: sts_SHA1withRSA
+          encodedKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjAUCdrKSsrwkfzcqsiBhecKuTOriACZ0GkTh0OGY59bcYyox6nPCE2q9YBAEWtZkc9sDsy1BJq8PU748GOjSptUsWIYDy02Yzl8+rDsCp+wYSwixunE5sfL9wyHJE1qq79j7K3FcJiqsQUVdvZbB2oeDaS7s35JjiWCQUWkxMGuuuqGncXbFVfOOalpbL+QoT9Br9mbpsy6sQn17IVQA1M+YRzo1hEOauPGdPa1VwTcNz8cJ/CMzIJMK41Woi0q7VlguYTzO+cbLf+UQOW/L4D1TI2ipeLOMhuYgBsKOwXifiQnVDGVXEKoIaFqRvA71uGecdalnynaP4WoeTFvcZwIDAQAB
+    audience: SARASERENITY
+
+ app:
+  actuator:
+    security:
+      enabled: true
+      user: admin
+      password: "{noop}admin"
+
+      
+utilityS3-lib:
+  expirationTimeMinutes: 5
+object:
+  storage:
+    s3:
+      bucket-name: compliance
+      compliance:
+        access-key-id: ${S3_ACCESS_KEY_ID}
+        bucket: compliance
+        endpoint: ${S3_SERVER_URL}
+        region: eu-east-1
+        secret-access-key: ${S3_SECRET_ACCESS_KEY}
+        
+kafka:
+  alerts:
+    topic: streaming.compliance.aml360.alerts
+  producer:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVES}
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+schema.registry:
+  enabled: true
+  url: ${KAFKA_SCHEMA_REGISTRY_SERVES}
+  identity-map-capacity: 1000
